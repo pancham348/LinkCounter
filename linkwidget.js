@@ -9,6 +9,9 @@ var getlinks = function() {
 	var links = {};
 	var idx = 0;
   $("a").each(function(){
+	  if (this.hostname === "") {
+		  return true; // skips links without a hostname
+	  }
 	  var name;
 	  if (this.text) {
 	  	name = this.text
@@ -28,6 +31,7 @@ var getlinks = function() {
 	  
 	  $(this).attr('data-color', color)
 	  $(this).attr('id', idx)
+	  $(this).attr('class', 'valid')
 	  links[this.href] = {text: name, count: 0, index: idx, color: color}
 	  idx++;
   })
@@ -105,25 +109,39 @@ var data = {
     ]
 };
 
+var options = {
+    animation: true,
+    scaleoverride: true,
+    responsive: false,
+    maintainAspectRatio: false
+}
+
 var barctx = $("#myBarChart").get(0).getContext("2d");
-var piectx = $("#myPieChart").get(0).getContext("2d");
 var linectx = $("#myLineChart").get(0).getContext("2d");
-var myBarChart = new Chart(barctx).Bar(data);
-var myPieChart = new Chart(piectx).PolarArea(pieData);
+var piectx = $("#myPieChart").get(0).getContext("2d");
+var myBarChart = new Chart(barctx).Bar(data, options);
+var myLineChart = new Chart(linectx).Line(data, options);
+var myPieChart = new Chart(piectx).PolarArea(pieData, options);
 legend(document.getElementById("pieLegend"), pieData)
-var myLineChart = new Chart(linectx).Line(data);
+
 
 $("a").each(function(){
+  if (this.hostname === "") {
+	  return true; // skips links without a hostname
+  }
 	myBarChart.datasets[0].bars[this.id].fillColor = $(this).attr("data-color")
 	myBarChart.update()
 });
 
 $("a").each(function(){
+  if (this.hostname === "") {
+	  return true; // skips links without a hostname
+  }
 	myLineChart.datasets[0].points[this.id].fillColor = $(this).attr("data-color")
 	myLineChart.update()
 });
 
-$("a").mousedown(function(){
+$(".valid").mousedown(function(){
 	linkCounts[this.href].count++;
 	myBarChart.datasets[0].bars[this.id].value = linkCounts[this.href].count
 	myLineChart.datasets[0].points[this.id].value = linkCounts[this.href].count
