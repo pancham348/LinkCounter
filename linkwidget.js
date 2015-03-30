@@ -3,25 +3,38 @@ String.prototype.capitalize = function(){
 	return firstLetter + this.slice(1, this.length)
 };
 
+// skips links without a hostname
+function skipIfInvalid(link){
+  if ((link.hostname === "") || $(link).is(':empty')) {
+	  return true; 
+  }
+}
+//create a hash storing all links and their properties
 var getlinks = function() {
 	var links = {};
 	var idx = 0;
   $("a").each(function(){
-	  if (this.hostname === "") {
-		  return true; // skips links without a hostname
+
+	  if ((this.hostname === "") || $(this).is(':empty')) {
+		  return true; 
 	  }
 	  var name;
 	  if (this.text) {
 	  	name = this.text
 	  }else{
-		  name = this.hostname.substring(4);
-		  name = name.slice(0, name.length - 4).capitalize();
+		  if (this.hostname.startsWith("www")) {
+			  name = this.hostname.substring(4);
+			  name = name.slice(0, name.length - 4).capitalize();
+		  }else{
+		  	name = this.hostname.slice(0, this.hostname.length - 4).capitalize();
+		  }
+		  
 	  }
 	  
 	  var color;
 	  var colorHash = {};
 	  color = getRandomColor()
-	  while(!validColor(colorHash, color)){
+	  while(!validColor(colorHash, color)){ //avoid color collisions between links
 	  	color = getRandomColor()
 	  }
 	  
@@ -38,6 +51,7 @@ var getlinks = function() {
 
 var linkCounts = getlinks()
 
+//generates random colors for all links
 function getRandomColor(){
 	var letters = '0123456789ABCDEF'.split('');
     var color = '#';
@@ -47,6 +61,7 @@ function getRandomColor(){
     return color;
 }
 
+//ensures that there are no collisions between colors
 function validColor(colorsHash, color){
 	if (colorsHash[color]) {
 		return false
@@ -73,6 +88,7 @@ function updateDataLabels(obj){
 	return dataLabels
 }
 
+//chart.js polar and piechart data is an array of objects
 function generatePieData(obj){
 	var pieObjs = []
 	for(var key in obj){
@@ -87,6 +103,7 @@ function generatePieData(obj){
 	return pieObjs;
 }
 
+//initialize datasets
 var dataCounts = updateDataSetCount(linkCounts)
 
 var dataLabels = updateDataLabels(linkCounts)
@@ -114,6 +131,7 @@ var options = {
     maintainAspectRatio: false
 }
 
+//draw charts
 var barctx = $("#myBarChart").get(0).getContext("2d");
 var linectx = $("#myLineChart").get(0).getContext("2d");
 var piectx = $("#myPieChart").get(0).getContext("2d");
@@ -122,23 +140,21 @@ var myLineChart = new Chart(linectx).Line(data, options);
 var myPieChart = new Chart(piectx).PolarArea(pieData, options);
 legend(document.getElementById("pieLegend"), pieData)
 
-
-$("a").each(function(){
-  if (this.hostname === "") {
-	  return true; // skips links without a hostname
-  }
+//add colors to bar chart
+$(".valid").each(function(){
+    skipIfInvalid(this)
 	myBarChart.datasets[0].bars[this.id].fillColor = $(this).attr("data-color")
 	myBarChart.update()
 });
 
-$("a").each(function(){
-  if (this.hostname === "") {
-	  return true; // skips links without a hostname
-  }
+//add colors to line chart
+$(".valid").each(function(){
+    skipIfInvalid(this)
 	myLineChart.datasets[0].points[this.id].fillColor = $(this).attr("data-color")
 	myLineChart.update()
 });
 
+//left or richt clicking incrments count of link
 $(".valid").mousedown(function(){
 	linkCounts[this.href].count++;
 	myBarChart.datasets[0].bars[this.id].value = linkCounts[this.href].count
