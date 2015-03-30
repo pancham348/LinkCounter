@@ -1,5 +1,3 @@
-var dataCounts = [];
-
 String.prototype.capitalize = function(){
 	var firstLetter = this[0].toUpperCase();
 	return firstLetter + this.slice(1, this.length)
