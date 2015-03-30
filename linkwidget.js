@@ -1,15 +1,20 @@
-var dataCounts = []
+var dataCounts = [];
+
+String.prototype.capitalize = function(){
+	var firstLetter = this[0].toUpperCase();
+	return firstLetter + this.slice(1, this.length)
+};
 
 var getlinks = function() {
 	var links = {};
 	var idx = 0;
   $("a").each(function(){
 	  var name;
-	  
 	  if (this.text) {
 	  	name = this.text
 	  }else{
-		name = this.href  	
+		  name = this.hostname.substring(4);
+		  name = name.slice(0, name.length - 4).capitalize();
 	  }
 	  
 	  var color;
@@ -105,6 +110,7 @@ var piectx = $("#myPieChart").get(0).getContext("2d");
 var linectx = $("#myLineChart").get(0).getContext("2d");
 var myBarChart = new Chart(barctx).Bar(data);
 var myPieChart = new Chart(piectx).PolarArea(pieData);
+legend(document.getElementById("pieLegend"), pieData)
 var myLineChart = new Chart(linectx).Line(data);
 
 $("a").each(function(){

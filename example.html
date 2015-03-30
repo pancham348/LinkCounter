@@ -15,17 +15,49 @@
 			background-color: teal;
 			margin-right: 2px;
 		}
+
+		#fork {
+		    position: absolute;
+		    top: 0;
+		    right: 0;
+		    border: 0;
+		}
+
+		.legend {
+		    width: 10em;
+		    border: 1px solid black;
+		}
+
+		.legend .title {
+		    display: block;
+		    margin-bottom: 0.5em;
+		    line-height: 1.2em;
+		    padding: 0 0.3em;
+		}
+
+		.legend .color-sample {
+		    display: block;
+		    float: left;
+		    width: 1em;
+		    height: 1em;
+		    border: 2px solid;
+		    border-radius: 0.5em; 
+		    margin-right: 0.5em;
+		}
 		</style>
 	<body>
 		<a href="http://www.yahoo.com">Yahoo</a><br>
 		<a href="http://www.google.com">Google</a><br>
 		<a href="http://www.espn.com">ESPN</a><br>
 		<a href="http://www.msn.com">MSN</a><br>
-		<a href="htp://www.amazon.com">Amazon</a><br>
+		<a href="http://www.amazon.com">Amazon</a><br>
+		<a href="http://www.facebook.com"><img src="http://housing.uh.edu/images/uhh_icon_facebook.jpg"></img></a><br>
+		<div id="pieLegend" width="25%" height="100"></div>
 		<!-- <button id="counter">Update</button> -->
 		<canvas id="myBarChart" width="400" height="400"></canvas>
 		<canvas id="myPieChart" width="400" height="400"></canvas>
 		<canvas id="myLineChart" width="400" height="400"></canvas>
+		<script type="text/javascript" src="legend.js"></script>
 		<script type="text/javascript" src="linkwidget.js"></script>
 	</body>
 </html>
