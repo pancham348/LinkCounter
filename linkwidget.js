@@ -15,18 +15,25 @@ var getlinks = function() {
 	var idx = 0;
   $("a").each(function(){
 
-	  if ((this.hostname === "") || $(this).is(':empty')) {
-		  return true; 
-	  }
+	  // if ((this.hostname === "") || $(this).is(':empty')) {
+ // 		  return true;
+ // 	  }
+ 	 if (skipIfInvalid(this)){
+		 return true;
+ 	 };
+ 	 var dotIdx;
 	  var name;
 	  if (this.text) {
 	  	name = this.text
 	  }else{
+		  
 		  if (this.hostname.startsWith("www")) {
 			  name = this.hostname.substring(4);
-			  name = name.slice(0, name.length - 4).capitalize();
+			  dotIdx = name.indexOf(".")
+			  name = name.slice(0, dotIdx).capitalize();
 		  }else{
-		  	name = this.hostname.slice(0, this.hostname.length - 4).capitalize();
+			dotIdx = this.hostname.indexOf(".")
+		  	name = this.hostname.slice(0, dotIdx).capitalize();
 		  }
 		  
 	  }
@@ -154,7 +161,7 @@ $(".valid").each(function(){
 	myLineChart.update()
 });
 
-//left or richt clicking incrments count of link
+//left or right clicking incrments count of link
 $(".valid").mousedown(function(){
 	linkCounts[this.href].count++;
 	myBarChart.datasets[0].bars[this.id].value = linkCounts[this.href].count
